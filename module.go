@@ -6,6 +6,7 @@ import (
 	"strings"
 	engine "text/template"
 
+	"github.com/bimalabs/generators/templates"
 	"gopkg.in/yaml.v2"
 )
 
@@ -17,19 +18,21 @@ type (
 	}
 )
 
-func (g *Module) Generate(template *Template, modulePath string, packagePath string, templatePath string) {
-	var str strings.Builder
-	str.WriteString(packagePath)
-	str.WriteString("/")
-	str.WriteString(templatePath)
-	str.WriteString("/module.tpl")
+func (g *Module) Generate(template *Template, modulePath string, driver string) {
+	var temp string
+	if driver == "mongo" {
+		temp = templates.MongoModule
+	} else {
+		temp = templates.GormModule
+	}
 
-	moduleTemplate, err := engine.ParseFiles(str.String())
+	moduleTemplate, err := engine.New("module").Parse(temp)
 	if err != nil {
 		panic(err)
 	}
 
-	str.Reset()
+	var str strings.Builder
+
 	str.WriteString(modulePath)
 	str.WriteString("/module.go")
 
@@ -81,6 +84,7 @@ func (g *Module) makeUnique(modules []string) []string {
 
 func (g *Module) parse(dir string) []string {
 	var path strings.Builder
+
 	path.WriteString(dir)
 	path.WriteString("/")
 	path.WriteString(c)

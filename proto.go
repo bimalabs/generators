@@ -4,27 +4,30 @@ import (
 	"os"
 	"strings"
 	engine "text/template"
+
+	"github.com/bimalabs/generators/templates"
 )
 
 type Proto struct {
 }
 
-func (g *Proto) Generate(template *Template, modulePath string, packagePath string, templatePath string) {
-	var path strings.Builder
+func (g *Proto) Generate(template *Template, modulePath string, driver string) {
+	var temp string
+	if driver == "mongo" {
+		temp = templates.MongoProto
+	} else {
+		temp = templates.GormProto
+	}
 
-	path.WriteString(packagePath)
-	path.WriteString("/")
-	path.WriteString(templatePath)
-	path.WriteString("/proto.tpl")
-
-	protoTemplate, err := engine.ParseFiles(path.String())
+	protoTemplate, err := engine.New("proto").Parse(temp)
 	if err != nil {
 		panic(err)
 	}
 
 	workDir, _ := os.Getwd()
 
-	path.Reset()
+	var path strings.Builder
+
 	path.WriteString(workDir)
 	path.WriteString("/protos/")
 	path.WriteString(template.ModuleLowercase)

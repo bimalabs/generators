@@ -2,8 +2,6 @@ package generators
 
 import (
 	"os"
-	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/gertd/go-pluralize"
@@ -13,7 +11,7 @@ import (
 
 type (
 	Generator interface {
-		Generate(template *Template, modulePath string, packagePath string, templatePath string)
+		Generate(template *Template, modulePath string, driver string)
 	}
 
 	Template struct {
@@ -55,16 +53,6 @@ type (
 )
 
 func (f *Factory) Generate(module ModuleTemplate) {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		panic("No caller information")
-	}
-
-	packagePath, err := filepath.Abs(filepath.Dir(filename))
-	if err != nil {
-		panic(err)
-	}
-
 	workDir, _ := os.Getwd()
 	packageName := f.packageName(workDir)
 	moduleName := strcase.ToCamel(module.Name)
@@ -85,19 +73,9 @@ func (f *Factory) Generate(module ModuleTemplate) {
 	f.Template.ModulePluralLowercase = modulePluralLowercase
 	f.Template.Columns = module.Fields
 
-	var templatePath strings.Builder
-
-	templatePath.WriteString("templates")
-	switch f.Driver {
-	case "mongo":
-		templatePath.WriteString("/mongo")
-	default:
-		templatePath.WriteString("/gorm")
-	}
-
 	os.MkdirAll(modulePath.String(), 0755)
 	for _, generator := range f.Generators {
-		generator.Generate(f.Template, modulePath.String(), packagePath, templatePath.String())
+		generator.Generate(f.Template, modulePath.String(), f.Driver)
 	}
 }
 

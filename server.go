@@ -4,25 +4,28 @@ import (
 	"os"
 	"strings"
 	engine "text/template"
+
+	"github.com/bimalabs/generators/templates"
 )
 
 type Server struct {
 }
 
-func (g *Server) Generate(template *Template, modulePath string, packagePath string, templatePath string) {
-	var path strings.Builder
+func (g *Server) Generate(template *Template, modulePath string, driver string) {
+	var temp string
+	if driver == "mongo" {
+		temp = templates.MongoServer
+	} else {
+		temp = templates.GormServer
+	}
 
-	path.WriteString(packagePath)
-	path.WriteString("/")
-	path.WriteString(templatePath)
-	path.WriteString("/server.tpl")
-
-	serverTemplate, err := engine.ParseFiles(path.String())
+	serverTemplate, err := engine.New("server").Parse(temp)
 	if err != nil {
 		panic(err)
 	}
 
-	path.Reset()
+	var path strings.Builder
+
 	path.WriteString(modulePath)
 	path.WriteString("/server.go")
 
