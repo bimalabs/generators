@@ -12,7 +12,7 @@ const ModuleRegister = "@modules:register"
 type Provider struct {
 }
 
-func (p *Provider) Generate(template *Template, modulePath string, packagePath string, templatePath string) {
+func (p *Provider) Generate(template *Template, modulePath string, driver string) {
 	workDir, _ := os.Getwd()
 
 	var path strings.Builder
