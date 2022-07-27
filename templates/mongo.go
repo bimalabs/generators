@@ -89,7 +89,7 @@ type Module struct {
     grpcs.Unimplemented{{.Module}}sServer
 }
 
-func (m *Module) GetPaginated(ctx context.Context, r *grpcs.Pagination) (*grpcs.{{.Module}}PaginatedResponse, error) {
+func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (*grpcs.{{.Module}}PaginatedResponse, error) {
     model := {{.Module}}{}
     reqeust := paginations.Request{}
 
