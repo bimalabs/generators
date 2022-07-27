@@ -245,13 +245,8 @@ message {{.Module}} {
 {{end}}
 }
 
-message {{.Module}}PaginatedResponse {
-    repeated {{.Module}} data = 1;
-    PaginationMetadata meta = 2;
-}
-
 service {{.Module}}s {
-    rpc GetPaginated (Pagination) returns ({{.Module}}PaginatedResponse) {
+    rpc GetPaginated (PaginationRequest) returns (PaginationResponse) {
         option (google.api.http) = {
             get: "/api/{{.ApiVersion}}/{{.ModulePluralLowercase}}"
         };
