@@ -83,7 +83,7 @@ type Module struct {
     grpcs.Unimplemented{{.Module}}sServer
 }
 
-func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (*grpcs.PaginationResponse, error) {
+func (m *Module) GetPaginated(ctx context.Context, r *grpcs.Pagination) (*grpcs.{{.Module}}PaginatedResponse, error) {
 	reqeust := paginations.Request{}
 
 	m.Paginator.Model = *m.Model
@@ -95,7 +95,7 @@ func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (
     records := make([]*grpcs.{{.Module}}, 0, m.Paginator.Limit)
 	metadata := m.Handler.Paginate(*m.Paginator, &records)
 
-	return &grpcs.PaginationResponse{
+	return &grpcs.{{.Module}}PaginatedResponse{
 		Data: records,
 		Meta: &grpcs.PaginationMetadata{
 			Page:     int32(metadata.Page),
@@ -245,8 +245,13 @@ message {{.Module}} {
 {{end}}
 }
 
+message {{.Module}}PaginatedResponse {
+    repeated {{.Module}} data = 1;
+    PaginationMetadata meta = 2;
+}
+
 service {{.Module}}s {
-    rpc GetPaginated (PaginationRequest) returns (PaginationResponse) {
+    rpc GetPaginated (PaginationRequest) returns ({{.Module}}PaginatedResponse) {
         option (google.api.http) = {
             get: "/api/{{.ApiVersion}}/{{.ModulePluralLowercase}}"
         };
