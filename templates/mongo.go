@@ -89,7 +89,7 @@ type Module struct {
     grpcs.Unimplemented{{.Module}}sServer
 }
 
-func (m *Module) GetPaginated(ctx context.Context, r *grpcs.Pagination) (*grpcs.{{.Module}}PaginatedResponse, error) {
+func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (*grpcs.PaginationResponse, error) {
     model := {{.Module}}{}
     reqeust := paginations.Request{}
 
@@ -102,7 +102,7 @@ func (m *Module) GetPaginated(ctx context.Context, r *grpcs.Pagination) (*grpcs.
     records := make([]*grpcs.{{.Module}}, 0, m.Paginator.Limit)
     metadata := m.Handler.Paginate(*m.Paginator, &records)
 
-    return &grpcs.{{.Module}}PaginatedResponse{
+    return &grpcs.PaginationResponse{
         Code: http.StatusOK,
         Data: records,
         Meta: &grpcs.PaginationMetadata{
