@@ -11,7 +11,7 @@ import (
 type Model struct {
 }
 
-func (g *Model) Generate(template *Template, modulePath string, driver string) {
+func (g *Model) Generate(template Template, modulePath string, driver string) {
 	var temp string
 	if driver == "mongo" {
 		temp = templates.MongoModel

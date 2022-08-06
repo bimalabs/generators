@@ -11,7 +11,7 @@ import (
 type Proto struct {
 }
 
-func (g *Proto) Generate(template *Template, modulePath string, driver string) {
+func (g *Proto) Generate(template Template, modulePath string, driver string) {
 	var temp string
 	if driver == "mongo" {
 		temp = templates.MongoProto

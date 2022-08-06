@@ -11,17 +11,17 @@ import (
 
 type (
 	Generator interface {
-		Generate(template *Template, modulePath string, driver string)
+		Generate(template Template, modulePath string, driver string)
 	}
 
 	Template struct {
-		ApiVersion            string
+		ApiPrefix             string
 		PackageName           string
 		Module                string
 		ModuleLowercase       string
 		ModulePlural          string
 		ModulePluralLowercase string
-		Columns               []*FieldTemplate
+		Columns               []FieldTemplate
 	}
 
 	ModuleJson struct {
@@ -31,7 +31,7 @@ type (
 
 	ModuleTemplate struct {
 		Name   string
-		Fields []*FieldTemplate
+		Fields []FieldTemplate
 	}
 
 	FieldTemplate struct {
@@ -44,10 +44,10 @@ type (
 	}
 
 	Factory struct {
-		ApiVersion string
+		ApiPrefix  string
 		Driver     string
-		Pluralizer *pluralize.Client
-		Template   *Template
+		Pluralizer pluralize.Client
+		Template   Template
 		Generators []Generator
 	}
 )
@@ -65,7 +65,7 @@ func (f *Factory) Generate(module ModuleTemplate) {
 	modulePath.WriteString("/")
 	modulePath.WriteString(modulePluralLowercase)
 
-	f.Template.ApiVersion = f.ApiVersion
+	f.Template.ApiPrefix = f.ApiPrefix
 	f.Template.PackageName = packageName
 	f.Template.Module = moduleName
 	f.Template.ModuleLowercase = strcase.ToDelimited(module.Name, '_')

@@ -18,7 +18,7 @@ type (
 	}
 )
 
-func (g *Module) Generate(template *Template, modulePath string, driver string) {
+func (g *Module) Generate(template Template, modulePath string, driver string) {
 	var temp string
 	if driver == "mongo" {
 		temp = templates.MongoModule
