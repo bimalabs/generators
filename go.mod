@@ -10,4 +10,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898 // indirect
+require golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect

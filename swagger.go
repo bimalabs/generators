@@ -13,7 +13,7 @@ import (
 type Swagger struct {
 }
 
-func (g *Swagger) Generate(template *Template, modulePath string, driver string) {
+func (g *Swagger) Generate(template Template, modulePath string, driver string) {
 	workDir, _ := os.Getwd()
 	var path strings.Builder
 

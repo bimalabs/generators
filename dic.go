@@ -11,7 +11,7 @@ import (
 type Dic struct {
 }
 
-func (g *Dic) Generate(template *Template, modulePath string, driver string) {
+func (g *Dic) Generate(template Template, modulePath string, driver string) {
 	var temp string
 	if driver == "mongo" {
 		temp = templates.MongoDic

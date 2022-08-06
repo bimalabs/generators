@@ -11,7 +11,7 @@ import (
 type Server struct {
 }
 
-func (g *Server) Generate(template *Template, modulePath string, driver string) {
+func (g *Server) Generate(template Template, modulePath string, driver string) {
 	var temp string
 	if driver == "mongo" {
 		temp = templates.MongoServer
