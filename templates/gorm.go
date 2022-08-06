@@ -216,7 +216,6 @@ option go_package = ".;grpcs";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
         title: "{{.Module}} Service";
-        version: "{{.ApiVersion}}";
     };
     consumes: "application/json";
     produces: "application/json";
