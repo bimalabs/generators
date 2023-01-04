@@ -71,7 +71,6 @@ import (
     "github.com/bimalabs/framework/v4"
 	"github.com/bimalabs/framework/v4/loggers"
 	"github.com/bimalabs/framework/v4/paginations"
-	"github.com/bimalabs/framework/v4/utils"
 	"github.com/goccy/go-json"
 	"github.com/jinzhu/copier"
 	"{{.PackageName}}/protos/builds"
