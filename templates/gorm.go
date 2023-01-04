@@ -92,8 +92,8 @@ func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (
     copier.Copy(&reqeust, r)
 	m.Paginator().Handle(reqeust)
 
-    records := make([]*grpcs.{{.Module}}, 0, m.Paginator.Limit)
-	metadata := m.Handler().Paginate(*m.Paginator, &records)
+    records := make([]*grpcs.{{.Module}}, 0, m.Paginator().Limit)
+	metadata := m.Handler().Paginate(m.Paginator(), &records)
 
 	return &grpcs.{{.Module}}PaginatedResponse{
 		Data: records,
@@ -112,7 +112,7 @@ func (m *Module) Create(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
 	v := m.Model
 	copier.Copy(v, r)
 
-	if message, err := utils.Validate(v); err != nil {
+	if message, err := m.Validate(v); err != nil {
 		loggers.Logger.Error(ctx, message)
 
 		return nil, status.Error(codes.InvalidArgument, message)
@@ -135,7 +135,7 @@ func (m *Module) Update(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
     hold := *v
 	copier.Copy(v, r)
 
-	if message, err := utils.Validate(v); err != nil {
+	if message, err := m.Validate(v); err != nil {
 		loggers.Logger.Error(ctx, message)
 
 		return nil, status.Error(codes.InvalidArgument, message)
