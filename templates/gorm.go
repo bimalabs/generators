@@ -78,7 +78,7 @@ import (
 )
 
 type Module struct {
-    *bima.Module
+    bima.Module
 	Model     *{{.Module}}
     grpcs.Unimplemented{{.Module}}sServer
 }
@@ -86,14 +86,14 @@ type Module struct {
 func (m *Module) GetPaginated(ctx context.Context, r *grpcs.PaginationRequest) (*grpcs.{{.Module}}PaginatedResponse, error) {
 	reqeust := paginations.Request{}
 
-	m.Paginator.Model = *m.Model
-	m.Paginator.Table = m.Model.TableName()
+	m.Paginator().Model = *m.Model
+	m.Paginator().Table = m.Model.TableName()
 
     copier.Copy(&reqeust, r)
-	m.Paginator.Handle(reqeust)
+	m.Paginator().Handle(reqeust)
 
     records := make([]*grpcs.{{.Module}}, 0, m.Paginator.Limit)
-	metadata := m.Handler.Paginate(*m.Paginator, &records)
+	metadata := m.Handler().Paginate(*m.Paginator, &records)
 
 	return &grpcs.{{.Module}}PaginatedResponse{
 		Data: records,
@@ -118,7 +118,7 @@ func (m *Module) Create(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
 		return nil, status.Error(codes.InvalidArgument, message)
 	}
 
-	if err := m.Handler.Create(v); err != nil {
+	if err := m.Handler().Create(v); err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 
 		return nil, status.Error(codes.Internal, "Internal server error")
@@ -141,7 +141,7 @@ func (m *Module) Update(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
 		return nil, status.Error(codes.InvalidArgument, message)
 	}
 
-	if err := m.Handler.Bind(&hold, r.Id); err != nil {
+	if err := m.Handler().Bind(&hold, r.Id); err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 
 		return nil, status.Error(codes.NotFound, fmt.Sprintf("Data with ID '%s' not found.", r.Id))
@@ -150,13 +150,13 @@ func (m *Module) Update(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
     v.Id = r.Id
 	v.SetCreatedBy(hold.CreatedBy.String)
 	v.SetCreatedAt(hold.CreatedAt.Time)
-	if err := m.Handler.Update(v, v.Id); err != nil {
+	if err := m.Handler().Update(v, v.Id); err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 
 		return nil, status.Error(codes.Internal, "Internal server error")
 	}
 
-    m.Cache.Invalidate(r.Id)
+    m.Cache().Invalidate(r.Id)
 
 	return r, nil
 }
@@ -164,13 +164,13 @@ func (m *Module) Update(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Mo
 func (m *Module) Get(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Module}}, error) {
     ctx = context.WithValue(ctx, "scope", "{{.ModuleLowercase}}")
 	v := *m.Model
-	if data, found := m.Cache.Get(r.Id); found {
+	if data, found := m.Cache().Get(r.Id); found {
 		err := json.Unmarshal(data, r)
 		if err == nil {
 			return r, nil
 		}
 	} else {
-		if err := m.Handler.Bind(&v, r.Id); err != nil {
+		if err := m.Handler().Bind(&v, r.Id); err != nil {
 			loggers.Logger.Error(ctx, err.Error())
 
 			return nil, status.Error(codes.NotFound, fmt.Sprintf("Data with ID '%s' not found.", r.Id))
@@ -181,7 +181,7 @@ func (m *Module) Get(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Modul
 
     data, err := json.Marshal(r)
 	if err == nil {
-		m.Cache.Set(r.Id, data)
+		m.Cache().Set(r.Id, data)
 	}
 
 	return r, nil
@@ -190,14 +190,14 @@ func (m *Module) Get(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Modul
 func (m *Module) Delete(ctx context.Context, r *grpcs.{{.Module}}) (*grpcs.{{.Module}}, error) {
     ctx = context.WithValue(ctx, "scope", "{{.ModuleLowercase}}")
 	v := m.Model
-	if err := m.Handler.Bind(v, r.Id); err != nil {
+	if err := m.Handler().Bind(v, r.Id); err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 
 		return nil, status.Error(codes.NotFound, fmt.Sprintf("Data with ID '%s' not found.", r.Id))
 	}
 
-    m.Handler.Delete(v, r.Id)
-    m.Cache.Invalidate(r.Id)
+    m.Handler().Delete(v, r.Id)
+    m.Cache().Invalidate(r.Id)
 
 	return &grpcs.{{.Module}}{}, nil
 }
